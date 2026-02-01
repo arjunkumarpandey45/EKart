@@ -11,5 +11,5 @@ app.get('/', (req, res) => {
           
 app.listen(port, () => { 
   connectDB()
-  console.log(`Example a listening on port ${port}`)
+  console.log(` Listening on port ${port}`)
 }) 

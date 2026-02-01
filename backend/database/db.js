@@ -6,7 +6,6 @@ const connectDB = async () => {
   const connections = [
     { name: "Atlas Default", uri: process.env.MONGO_URI_ATLAS_DEFAULT, prod: true },
     { name: "Atlas SRV", uri: process.env.MONGO_URI_SRV, prod: true },
-   
     { name: "Direct (ISP Bypass)", uri: process.env.MONGO_URI_DIRECT, prod: false }
   ];
 
@@ -15,10 +14,10 @@ const connectDB = async () => {
 
     try {
       console.log(`⏳ Trying: ${name}...`);
-      
-      await mongoose.connect(uri, { 
+
+      await mongoose.connect(uri, {
         serverSelectionTimeoutMS: 8000, // 8 Seconds ka time diya hai ab
-        family: 4 
+        family: 4
       });
 
       return console.log(`✅ Connected via: ${name}`);

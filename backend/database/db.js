@@ -22,10 +22,10 @@ const connectDB = async () => {
 
       return console.log(`✅ Connected via: ${name}`);
     } catch (err) {
-      console.log(`❌ ${name} failed (Timeout/Error).`);
+      console.log(`${name} failed (Timeout/Error).`);
     }
   }
-
+ 
   console.error("💥 All connection methods failed!");
   process.exit(1);
 };

@@ -1,6 +1,7 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
 
+
 export const emailVerify = async (token, email) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -9,17 +10,17 @@ export const emailVerify = async (token, email) => {
         user: process.env.MAIL_USER_EMAIL,
         pass: process.env.MAIL_USER_PASS, // Gmail App Password
       },
-      
+
 
     });
-// console.log("EMAIL:", process.env.MAIL_USER_EMAIL);
-// console.log("PASS:", process.env.MAIL_USER_PASS);
-   const mailOptions = {
-  from: process.env.MAIL_USER_EMAIL,
-  to: email,
-  subject: "Email Verification for E-Kart",
-  text: `Please verify your email by clicking on the link: http://localhost:5173/verify-email/${token}`,
-};
+    // console.log("EMAIL:", process.env.MAIL_USER_EMAIL);
+    // console.log("PASS:", process.env.MAIL_USER_PASS);
+    const mailOptions = {
+      from: process.env.MAIL_USER_EMAIL,
+      to: email,
+      subject: "Email Verification for E-Kart",
+      text: `Please verify your email by clicking on the link: http://localhost:5173/verify-email/${token}`,
+    };
 
 
     await transporter.sendMail(mailOptions);

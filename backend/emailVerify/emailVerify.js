@@ -1,7 +1,7 @@
 import nodemailer from "nodemailer";
 import "dotenv/config";
 
-
+ 
 export const emailVerify = async (token, email) => {
   try {
     const transporter = nodemailer.createTransport({
@@ -28,6 +28,6 @@ export const emailVerify = async (token, email) => {
 
   } catch (error) {
     console.error("❌ Email sending failed:", error.message);
-    throw error; // controller ko error pata chale
+    throw error; 
   }
 };

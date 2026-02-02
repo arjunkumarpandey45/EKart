@@ -2,7 +2,7 @@ import bcrypt from "bcryptjs";
 
 import { User } from "../model/usermodel.js";
 import jwt from "jsonwebtoken";
-import {emailVerify} from "../emailVerify/emailVerify.js";
+import { emailVerify } from "../emailVerify/emailVerify.js";
 export const register = async (req, res) => {
     try {
         console.log("BODY:", req.body);
@@ -35,9 +35,9 @@ export const register = async (req, res) => {
             lastName,
             email,
             password: hashedPassword,
-         
+
         });
-        const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '5min' })
+        const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, { expiresIn: '1min' })
         emailVerify(token, email)
         newUser.token = token;
         //  Success response (never send password)
@@ -61,32 +61,54 @@ export const register = async (req, res) => {
     }
 };
 export const Verification = async (req, res) => {
-  try {
-    const authHeader = req.headers.authorization;
-    if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(400).json({ success: false, message: "Invalid token or missing token" })
-    }
-
-    const token = authHeader.split(" ")[1];
-    let decoded;
     try {
-      decoded = jwt.verify(token, process.env.JWT_SECRET)
+        const authHeader = req.headers.authorization;
+        if (!authHeader || !authHeader.startsWith("Bearer ")) {
+            return res.status(400).json({ success: false, message: "Invalid token or missing token" })
+        }
 
+        const token = authHeader.split(" ")[1];
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET)
+
+        } catch (error) {
+            if (error.name === "TokenExpiredError") {
+                return res.status(400).json({ success: false, message: "Token expired" })
+            }
+            return res.status(400).json({ success: false, message: "Verification failed" })
+        }
+        const user = await User.findById(decoded.id);
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" })
+        }
+        user.token = user.token;
+        user.isVerified = true;
+        await user.save();
+        return res.status(200).json({ success: true, message: "Email verified successfully" })
     } catch (error) {
-      if (error.name === "TokenExpiredError") {
-        return res.status(400).json({ success: false, message: "Token expired" })
-      }
-      return res.status(400).json({ success: false, message: "Verification failed" })
+        return res.status(500).json({ success: false, message: error.message })
     }
-    const user= await User.findById(decoded.id);
-    if (!user) {
-      return res.status(404).json({ success: false, message: "User not found" })
+}
+export const reVerification = async (req, res) => {
+    try {
+        const { email } = req.body
+        const user = await User.findOne({ email })
+        if (!user) {
+            return res.status(400).json({
+                success: false,
+                message: "User Not Found"
+            })
+        }
+        const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '5min' })
+        await emailVerify(token, email)
+        user.token = token
+        await user.save()
+        return res.status(200).json({ success: true, message: "Verification email sent successfully", token: user.token })
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            message: "Internal server error"
+        })
     }
-    user.token = user.token;
-    user.isVerified = true;
-    await user.save();
-    return res.status(200).json({ success: true, message: "Email verified successfully" })
-  }catch (error) {
-    return res.status(500).json({ success: false, message:error.message })
-  }
 }

@@ -306,3 +306,49 @@ await user.save()
     return res.status(400).json({success:false,message:error.message})
   }
 }
+export const verifyOTP=async(req,res)=>{
+  try{
+    const {otp}=req.body
+    const {email}=req.param.email
+    if(!otp){
+      return res.status(400).json({
+        success:false,
+        message:"Otp requires"
+      })
+    }
+const user=await User.findOne({email})
+  if(!user){
+      return res.status(400).json({
+        success:false,
+        message:"User Not found !!"
+      })
+    }
+    if(!user.otp||user.otpExpire){
+       return res.status(400).json({
+        success:false,
+        message:"otp expired or already used !!"
+      })
+    }
+    if(user.otpExpire<new Date()){
+       return res.status(400).json({
+        success:false,
+        message:"Otp Expired , Please Try Again..."
+      })
+    }
+    if(otp!==user.otp){
+ return res.status(400).json({
+        success:false,
+        message:"Otp is Incorrect,Try again.."
+      })
+    } 
+    user.otp=null;
+    user.otpExpire=null
+    await user.save()
+     return res.status(200).json({
+        success:true,
+        message:"Otp Verified ,Yeah..."
+      })
+  }catch(error){
+    return res.status(400).json({success:false,message:error.message})
+  }
+}

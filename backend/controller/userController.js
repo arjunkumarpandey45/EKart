@@ -3,6 +3,7 @@ import jwt from "jsonwebtoken";
 import { User } from "../model/usermodel.js";
 import { Session } from "../model/sessionModel.js";
 import { emailVerify } from "../emailVerify/emailVerify.js";
+import { sentOtpMail } from "../emailVerify/otpVerify.js";
 
 /* =========================
    REGISTER
@@ -271,5 +272,37 @@ export const logout = async (req, res) => {
     return res.status(200).json({ success: true, message: "Logged out successfully", });
   } catch (error) {
     return res.status(500).json({ success: false, message: "Logout error: " + error.message, });
+  }
+}
+/* =========================
+   FORGOT PASSWORD
+========================= */
+export const forgotPassword=async(req,res)=>{
+  try{
+const {email}=req.body
+console.log("EMAIL RECEIVED:", email);
+
+ if (!email) {
+      return res.status(400).json({
+        success: false,
+        message: "Email is required",
+      });
+    }
+const user=await User.findOne({email})
+if(!user){
+   return res.status(400).json({success:false,message:"User not found"})
+}
+const otp= Math.floor(100000+Math.random()*900000).toString()
+const otpExpire= new Date(Date.now()+10*60*1000)
+user.otp=otp
+user.otpExpire=otpExpire
+await user.save()
+ await sentOtpMail(email,otp)
+   return res.status(200).json({
+      success: true,
+      message: "OTP sent successfully",
+    });
+  }catch(error){
+    return res.status(400).json({success:false,message:error.message})
   }
 }

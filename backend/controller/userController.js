@@ -49,9 +49,9 @@ export const register = async (req, res) => {
     return res.status(201).json({
       success: true,
       message: "User registered successfully. Please verify your email.",
-      userName:newUser.firstName,
-      useremail:newUser.email,
-      token:newUser.token
+      userName: newUser.firstName,
+      useremail: newUser.email,
+      token: newUser.token
     });
   } catch (error) {
     return res.status(500).json({
@@ -169,7 +169,7 @@ export const reVerification = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Verification email sent",
-      token:user.token
+      token: user.token
     });
   } catch (error) {
     return res.status(500).json({
@@ -231,9 +231,15 @@ export const login = async (req, res) => {
     user.isLoggedIn = true;
     await user.save();
 
-  
-    await Session.deleteOne({ userId: user._id ,email:user.email});
-    await Session.create({ userId: user._id,email:user.email });
+    const session = await Session.findOne({ userId: user._id, email: user.email });
+    if (session) {
+      return res.status(401).json({
+        success: false,
+        message: "Already Looged In !!"
+      });
+    }
+    await Session.deleteOne({ userId: user._id, email: user.email });
+    await Session.create({ userId: user._id, email: user.email });
 
     return res.status(200).json({
       success: true,
@@ -248,3 +254,22 @@ export const login = async (req, res) => {
     });
   }
 };
+/* =========================
+   LOGOUT
+========================= */
+export const logout = async (req, res) => {
+  try {
+    const userId = req.user._id
+    const session = await Session.findOne({ userId: userId })
+    if (!session) {
+      return res.status(401).json({ success: false, message: "Already Logged Out !" });
+    }
+
+
+    await Session.deleteMany({ userId: userId });
+    await User.findByIdAndUpdate(userId, { isLoggedIn: false })
+    return res.status(200).json({ success: true, message: "Logged out successfully", });
+  } catch (error) {
+    return res.status(500).json({ success: false, message: "Logout error: " + error.message, });
+  }
+}

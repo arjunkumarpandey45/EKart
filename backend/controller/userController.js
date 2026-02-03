@@ -306,6 +306,9 @@ export const forgotPassword = async (req, res) => {
     return res.status(400).json({ success: false, message: error.message })
   }
 }
+/* =========================
+   VERIFY OTP
+========================= */
 export const verifyOTP = async (req, res) => {
   try {
     const { otp } = req.body
@@ -352,6 +355,9 @@ export const verifyOTP = async (req, res) => {
     return res.status(400).json({ success: false, message: "Oh "+error.message })
   }
 }
+/* =========================
+CHANGE PASSWORD
+========================= */
 export const changePassword = async (req, res) => {
   try {
     const { newPassword, confirmPassword } = req.body
@@ -374,5 +380,19 @@ export const changePassword = async (req, res) => {
     return res.status(200).json({ success: false, message: "Password Changed Sucessfully.." })
   } catch (error) {
     return res.status(400).json({ success: false, message: error.message })
+  }
+}
+/* =========================
+  All USER
+========================= */
+export const allUser=async(req,res)=>{
+  try{
+const users =await User.find()
+return res.status(200).json({
+  success:true,
+  users
+})
+  }catch(error){
+      return res.status(500).json({ success: false, message: error.message })
   }
 }

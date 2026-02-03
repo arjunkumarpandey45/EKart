@@ -59,6 +59,7 @@ const userSchema = new mongoose.Schema(
     },
     phoneNumber: {
       type: Number,
+      
     },
     address: {
       type: String,

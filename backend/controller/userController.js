@@ -352,7 +352,7 @@ export const verifyOTP = async (req, res) => {
       message: "Otp Verified ,Yeah..."
     })
   } catch (error) {
-    return res.status(400).json({ success: false, message: "Oh "+error.message })
+    return res.status(400).json({ success: false, message: "Oh " + error.message })
   }
 }
 /* =========================
@@ -371,10 +371,10 @@ export const changePassword = async (req, res) => {
     if (!newPassword || !confirmPassword) {
       return res.status(400).json({ success: false, message: "All Fields are required" })
     }
-    if (newPassword !==confirmPassword) {
+    if (newPassword !== confirmPassword) {
       return res.status(400).json({ success: false, message: "Password didn't matched" })
     }
-    const hashedPassword =await  bcrypt.hash(newPassword, 10)
+    const hashedPassword = await bcrypt.hash(newPassword, 10)
     user.password = hashedPassword
     await user.save()
     return res.status(200).json({ success: false, message: "Password Changed Sucessfully.." })
@@ -385,14 +385,29 @@ export const changePassword = async (req, res) => {
 /* =========================
   All USER
 ========================= */
-export const allUser=async(req,res)=>{
-  try{
-const users =await User.find()
-return res.status(200).json({
-  success:true,
-  users
-})
-  }catch(error){
-      return res.status(500).json({ success: false, message: error.message })
+export const allUser = async (req, res) => {
+  try {
+    const users = await User.find()
+    return res.status(200).json({
+      success: true,
+      users
+    })
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message })
+  }
+}
+/* =========================
+  Get User By Id
+========================= */
+export const getUserById = async (req, res) => {
+  try {
+    const { userId } = req.params
+    const user = await User.findById({ userId }).select("-password -otp -otpExpire -token")
+    if (!user) {
+      return res.status(400).json({ success: false, message: "user not found" })
+    }
+    return res.status(200).json({ success: true, message: "user founded" })
+  } catch (error) {
+    return res.status(500).json({ success: false, message: error.message })
   }
 }

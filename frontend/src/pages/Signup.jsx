@@ -59,12 +59,15 @@ function Signup() {
           progress: undefined,
           theme: "colored",
         });
-
-        navigate('/verify')
-
       }
+setTimeout(() => {
+        navigate('/verify')
+}, 1000);
     } catch (error) {
-      toast.error("Failed to send email 😡", {
+      const backendMessage =
+        error.response?.data?.message || "Something went wrong ❌";
+
+      toast.error(backendMessage, {
         position: "top-center",
         autoClose: 4000,
         hideProgressBar: false,
@@ -74,8 +77,9 @@ function Signup() {
         theme: "colored",
       });
 
-      console.log(error)
-
+  console.log("Backend error 👉", error.response?.data);
+    } finally {
+      setLoading(false); 
     }
     // fake API call
     // setTimeout(() => {
@@ -95,7 +99,7 @@ bg-gradient-to-br from-white via-blue-50 to-pink-50 px-4">
         closeOnClick
         pauseOnHover
         draggable
-        theme="dark"   // 🔥 dark looks better than light
+        theme="dark"  
         limit={3}
       />
 

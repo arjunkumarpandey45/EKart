@@ -11,6 +11,7 @@ import { sentOtpMail } from "../emailVerify/otpVerify.js";
 export const register = async (req, res) => {
   try {
     const { email, firstName, lastName, password } = req.body;
+console.log("REQ BODY 👉", req.body);
 
     if (!email || !firstName || !lastName || !password) {
       return res.status(400).json({

@@ -6,25 +6,32 @@ import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
 import './app.css'
+import Verify from './pages/verify'
 function App() {
-  const router=createBrowserRouter([
+  const router = createBrowserRouter([
     {
-      path:'/',
-      element:<><Navbar/><Home/></>
+      path: '/',
+      element: <><Navbar /><Home /></>
     },
-       {
-      path:'/login',
-      element:<><Login/></>},
-       {
-      path:'/signup',
-      element:<><Signup/></>
+    {
+      path: '/login',
+      element: <><Login /></>
+    },
+    {
+      path: '/signup',
+      element: <><Signup /></>
+    },
+    {
+      path: '/verify',
+      element: <><Verify /></>
     }
   ])
+  ])
 
-  
+
   return (
     <div>
-      <RouterProvider router={router}/>
+      <RouterProvider router={router} />
     </div>
   )
 }

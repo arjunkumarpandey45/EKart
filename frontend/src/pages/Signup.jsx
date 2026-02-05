@@ -11,6 +11,8 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Link, useNavigate } from "react-router"
 import { Eye, EyeOff, Loader2 } from "lucide-react"
+import axios from "axios"
+import { toast, ToastContainer } from "react-toastify"
 
 function Signup() {
   const [showPassword, setShowPassword] = useState(false)
@@ -33,21 +35,69 @@ function Signup() {
     }))
   }
 
-  const handleSignup = (e) => {
+  const handleSignup = async (e) => {
     e.preventDefault()
     console.log(formData)
     setLoading(true)
 
+    try {
+      const res = await axios.post(`http://localhost:3000/api/user/register`, formData,
+        {
+          headers: {
+            "Content-Type": "Application/json"
+          }
+        }
+      )
+      if (res.data.success) {
+        toast.success("Email sent successfully 😄", {
+          position: "top-center",
+          autoClose: 3000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+          theme: "colored",
+        });
+
+        navigate('/verify')
+
+      }
+    } catch (error) {
+      toast.error("Failed to send email 😡", {
+        position: "top-center",
+        autoClose: 4000,
+        hideProgressBar: false,
+        closeOnClick: true,
+        pauseOnHover: true,
+        draggable: true,
+        theme: "colored",
+      });
+
+      console.log(error)
+
+    }
     // fake API call
-    setTimeout(() => {
-      setLoading(false)
-      navigate("/login")
-    }, 2000)
+    // setTimeout(() => {
+    //   setLoading(false)
+    //   navigate("/login")
+    // }, 2000)
   }
 
   return (
     <div className="min-h-screen flex items-center justify-center 
 bg-gradient-to-br from-white via-blue-50 to-pink-50 px-4">
+      <ToastContainer
+        position="top-center"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        pauseOnHover
+        draggable
+        theme="dark"   // 🔥 dark looks better than light
+        limit={3}
+      />
 
       <Card className="w-full max-w-sm rounded-2xl shadow-2xl bg-white border border-slate-200">
 

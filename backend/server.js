@@ -1,12 +1,15 @@
 import express from 'express'
 import connectDB from './database/db.js'
 import userRoute from './routes/userRoute.js'
+import cors from 'cors'
 const app = express()
-
-import "dotenv/config"
-
-const port = process.env.PORT || 1000
 app.use(express.json())
+import "dotenv/config"
+app.use(cors({
+origin:'http://localhost:5173',credentials:true
+}))
+const port = process.env.PORT || 1000
+
 app.use('/api/user', userRoute)
 app.get('/', (req, res) => {
   res.send('Hello World!')

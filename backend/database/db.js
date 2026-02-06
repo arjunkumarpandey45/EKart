@@ -1,32 +1,46 @@
 import mongoose from "mongoose";
 
 const connectDB = async () => {
-  if (mongoose.connection.readyState === 1) return console.log("ℹ️ MongoDB already connected");
+  if (mongoose.connection.readyState === 1) return;
 
-  const connections = [
-    { name: "Atlas Default", uri: process.env.MONGO_URI_ATLAS_DEFAULT, prod: true },
-    { name: "Atlas SRV", uri: process.env.MONGO_URI_SRV, prod: true },
-    { name: "Direct (ISP Bypass)", uri: process.env.MONGO_URI_DIRECT, prod: false }
+  const connectionPaths = [
+    { name: "Atlas Default", uri: process.env.MONGO_URI_ATLAS_DEFAULT, checkPrimary: false },
+    { name: "Atlas SRV", uri: process.env.MONGO_URI_SRV, checkPrimary: false },
+    { name: "Direct Shard 00", uri: process.env.SHARD_00, checkPrimary: true },
+    { name: "Direct Shard 01", uri: process.env.SHARD_01, checkPrimary: true },
+    { name: "Direct Shard 02", uri: process.env.SHARD_02, checkPrimary: true }
   ];
 
-  for (const { name, uri, prod } of connections) {
-    if (!uri || (process.env.NODE_ENV === "production" && !prod)) continue;
+  for (const conn of connectionPaths) {
+    if (!conn.uri) continue;
 
     try {
-      console.log(`⏳ Trying: ${name}...`);
-
-      await mongoose.connect(uri, {
-        serverSelectionTimeoutMS: 8000, // 8 Seconds ka time diya hai ab
-        family: 4
+      console.log(`⏳ Testing: ${conn.name}...`);
+      
+      await mongoose.connect(conn.uri, { 
+        serverSelectionTimeoutMS: 5000, 
+        family: 4 
       });
 
-      return console.log(`✅ Connected via: ${name}`);
+      // Agar hum direct shard connect kar rahe hain, toh check karo Primary hai ya nahi
+      if (conn.checkPrimary) {
+        const isMasterDoc = await mongoose.connection.db.admin().command({ isMaster: 1 });
+        
+        if (!isMasterDoc.ismaster) {
+          console.log(`ℹ️ ${conn.name} is Secondary (Read-Only). Skipping to next...`);
+          await mongoose.disconnect();
+          continue; 
+        }
+      }
+
+      console.log(`✅ SUCCESS! Connected to PRIMARY via: ${conn.name}`);
+      return; 
     } catch (err) {
-      console.log(`${name} failed (Timeout/Error).`);
+      console.log(`❌ ${conn.name} failed: ${err.message}`);
     }
   }
- 
-  console.error("💥 All connection methods failed!");
+
+  console.error("💥 SYSTEM FAILURE: No writable connection found!");
   process.exit(1);
 };
 

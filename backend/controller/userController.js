@@ -1,6 +1,6 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import { User } from "../model/usermodel.js";
+import  User  from "../model/usermodel.js";
 import { Session } from "../model/sessionModel.js";
 import { emailVerify } from "../emailVerify/emailVerify.js";
 import { sentOtpMail } from "../emailVerify/otpVerify.js";

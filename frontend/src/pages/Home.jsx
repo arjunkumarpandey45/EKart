@@ -1,10 +1,13 @@
 
+import Navbar from '@/components/Navbar'
 import React from 'react'
+import OverView from './OverView'
 
 function Home() {
   return (
-    <div>
-<h1>hsvgad</h1>
+    <div >
+<Navbar></Navbar>
+<OverView></OverView>
     </div>
   )
 }

@@ -5,7 +5,7 @@ import Navbar from './components/Navbar'
 import Login from './pages/Login'
 import Signup from './pages/Signup'
 import Home from './pages/Home'
-import './app.css'
+import './App.css'
 import Verify from './pages/verify'
 import VerifyEmail from './pages/VerifyEmail'
 function App() {

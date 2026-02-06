@@ -26,7 +26,7 @@ const user=false
 
         {/* DESKTOP BUTTON */}
         <a
-          href="#contact"
+         
           className="hidden md:inline-block rounded-full bg-indigo-600 px-5 py-2
           text-sm font-semibold text-white hover:bg-indigo-700 transition shadow-md"
         >

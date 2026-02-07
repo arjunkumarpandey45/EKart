@@ -83,7 +83,7 @@ function Navbar() {
 
           <li>
             <h1 className="hover:text-indigo-600 transition-colors cursor-pointer"><b>
-              {user ? <a href="/profile"> Hi,{user.firstName}</a> : <a href="/signup">Welcome, Guest</a>}
+              {user ? <a className="cursor-pointer" href="/profile"> Hi,{user.firstName}</a> : <a className="cursor-pointer" href="/signup">Welcome, Guest</a>}
             </b> </h1>
           </li>
           {/* DESKTOP BUTTON */}
@@ -94,10 +94,10 @@ function Navbar() {
 
               <button
                 onClick={logoutHandle}
-                className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-300 border border-gray-200 hover:border-red-200 hover:text-red-600 hover:shadow-lg hover:shadow-red-500/10 active:scale-95"
+                className="group relative flex items-center gap-2 cursor-pointer overflow-hidden rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-300 border border-gray-200 hover:border-red-200 hover:text-red-600 hover:shadow-lg hover:shadow-red-500/10 active:scale-95"
               >
 
-                <span className="h-2 w-2 rounded-full animate-pulse hover:cursor-pointer  group-hover:bg-red-600"></span>
+                <span className="h-2 w-2 rounded-full animate-pulse cursor-pointer  group-hover:bg-red-600"></span>
 
                 {loading && <Loader2 className="h-4 w-4 animate-spin" />}
                 {loading ? "Trying To Logout" : "Logout"}
@@ -113,7 +113,7 @@ function Navbar() {
 
             <Link to="/signup">
               <button
-                className="group relative flex items-center gap-2 overflow-hidden rounded-full bg-indigo-600 px-7 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-95"
+                className="group relative flex items-center gap-2 cursor-pointer overflow-hidden rounded-full bg-indigo-600 px-7 py-2.5 text-sm font-bold text-white transition-all duration-300 hover:bg-indigo-700 hover:shadow-xl hover:shadow-indigo-500/30 active:scale-95"
               >
 
                 <div className="absolute -left-[100%] top-0 h-full w-full bg-gradient-to-r from-transparent via-white/20 to-transparent transition-all duration-500 group-hover:left-[100%]"></div>
@@ -158,7 +158,7 @@ function Navbar() {
 
       {/* MOBILE MENU */}
       {open && (
-        <div className="md:hidden bg-white border-b border-gray-200 shadow-lg animate-in slide-in-from-top duration-300">
+        <div className="md:hidden bg-white border-b border-gray-200 cursor-pointer shadow-lg animate-in slide-in-from-top duration-300">
           {/* Links container: Left aligned */}
           <ul className="flex flex-col gap-2 px-6 pt-5 pb-3 text-gray-700 text-sm font-medium">
             <li className="border-b border-gray-50 pb-2">

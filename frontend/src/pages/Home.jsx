@@ -11,6 +11,7 @@ function Home() {
 <Navbar></Navbar>
 
 <OverView></OverView>
+<hr></hr>
 <Footer></Footer>
     </div>
   )

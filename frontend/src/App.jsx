@@ -8,6 +8,7 @@ import Home from './pages/Home'
 import './App.css'
 import Verify from './pages/verify'
 import VerifyEmail from './pages/VerifyEmail'
+import Profile from './pages/Profile'
 function App() {
   const router = createBrowserRouter([
     {
@@ -26,7 +27,12 @@ function App() {
       path: '/verify',
       element: <><Verify /></>
     }
+    
     ,
+    {
+      path: '/profile',
+      element: <><Navbar/><Profile/></>
+    },
     {
       path: '/verify-email/:token',
       element: <><VerifyEmail/></>

@@ -12,8 +12,8 @@ export const isAuthenticated = async (req, res, next) => {
         try {
             decoded = jwt.verify(token, process.env.JWT_SECRET)
         } catch (error) {
-            if (error.name === "TokeneExpiredError") {
-                return res.status(400).json({ success: false, message: "Token Expired " })
+            if (error.name === "TokenExpiredError") {
+                return res.status(401).json({ success: false, message: "Token Expired " })
             }
             return res.status(401).json({ success: false, message: "Token Missing or Invailid" })
         }

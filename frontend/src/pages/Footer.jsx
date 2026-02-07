@@ -19,7 +19,7 @@ function Footer() {
         {/* RIGHT - SOCIAL LINKS */}
         <div className="flex items-center gap-5 text-gray-600 text-lg">
           <a
-            href="https://instagram.com/yourusername"
+            href="https://instagram.com/ig_arjunpandit45"
             target="_blank"
             rel="noreferrer"
             className="hover:text-black"
@@ -28,7 +28,7 @@ function Footer() {
           </a>
 
           <a
-            href="https://github.com/yourusername"
+            href="https://github.com/arjunkumarpandey45"
             target="_blank"
             rel="noreferrer"
             className="hover:text-black"
@@ -37,7 +37,7 @@ function Footer() {
           </a>
 
           <a
-            href="https://linkedin.com/in/yourusername"
+            href="https://www.linkedin.com/in/arjun-kumar-pandey-b2a24a330/"
             target="_blank"
             rel="noreferrer"
             className="hover:text-black"
@@ -46,7 +46,7 @@ function Footer() {
           </a>
 
           <a
-            href="https://yourportfolio.com"
+            href="https://arjunkumarpandey45.vercel.app/"
             target="_blank"
             rel="noreferrer"
             className="hover:text-black"

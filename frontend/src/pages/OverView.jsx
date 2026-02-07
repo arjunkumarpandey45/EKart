@@ -3,7 +3,7 @@ import { FaHeadset, FaShippingFast, FaShieldAlt, FaUndo } from "react-icons/fa";
 
 function OverView() {
   return (
-    <section className="h-[30vh] w-full bg-white flex items-center">
+    <section className="h-[30vh] w-full bg-white pt-20 flex items-center">
       <div className="mx-auto max-w-7xl w-full px-6 grid grid-cols-2 md:grid-cols-4 gap-6">
 
         {/* Feature 1 */}

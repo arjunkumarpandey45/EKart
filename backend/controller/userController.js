@@ -242,13 +242,29 @@ export const login = async (req, res) => {
     }
     await Session.deleteOne({ userId: user._id, email: user.email });
     await Session.create({ userId: user._id, email: user.email });
+  console.log("LOGIN RESPONSE USER 👉", {
+  _id: user._id,
+  firstName: user.firstName,
+  lastName: user.lastName,
+  email: user.email,
+});
+  return res.status(200).json({
+  success: true,
+  
+  message: `Welcome back Mr ${user.firstName}`,
+  
+  user: {
+    _id: user._id,
+    firstName: user.firstName,
+    lastName: user.lastName,
+    email: user.email,
+    role: user.role,
+    isVerified: user.isVerified,
+  },
+  accessToken,
+  refreshToken,
+});
 
-    return res.status(200).json({
-      success: true,
-      message: `Welcome back Mr ${user.firstName}`,
-      accessToken,
-      refreshToken,
-    });
   } catch (error) {
     return res.status(500).json({
       success: false,

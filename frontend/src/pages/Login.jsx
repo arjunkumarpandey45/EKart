@@ -16,10 +16,13 @@ import { Link, useNavigate } from "react-router"
 import axios from "axios"
 import { toast, ToastContainer } from "react-toastify"
 
+import useAuthStore from "@/store/authStore"
+
 function Login() {
     const [showPassword, setShowPassword] = useState(false)
-      const [loading, setLoading] = useState(false)
-    const navigate=useNavigate()
+    const [loading, setLoading] = useState(false)
+    const { setAuth } = useAuthStore();
+    const navigate = useNavigate()
     const [formData, setFormdata] = useState({
         email: "",
         password: ""
@@ -29,52 +32,59 @@ function Login() {
         const { name, value } = e.target
         setFormdata((prev) => ({
             ...prev, [name]: value
-        }))}
-        const handleLogin = async (e) => {
-           
-            e.preventDefault()
-             
-            console.log(formData)
-            try {
-                const res = await axios.post(`http://localhost:3000/api/user/login`, formData, {
-                    headers: {
-                        "Content-Type": "Application/json"
-                    }
-                })
-setLoading(true)
-                if (res.data.success) {
-                    toast.success("Logged in successfully 😄", {
-                        position: "top-center",
-                        autoClose: 3000,
-                        hideProgressBar: false,
-                        closeOnClick: true,
-                        pauseOnHover: true,
-                        draggable: true,
-                        progress: undefined,
-                        theme: "colored",
-                    });
-                }
-                setTimeout(() => {
-                    navigate('/home')
-                }, 3000);
-            } catch (error) {
-                const backendMessage =
-                    error.response?.data?.message || "Something went wrong ❌";
+        }))
+    }
+    const handleLogin = async (e) => {
+        e.preventDefault();
+        setLoading(true); // Loading pehle hi start kar dein
 
-                toast.error(backendMessage, {
+        try {
+            const res = await axios.post(`http://localhost:3000/api/user/login`, formData, {
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                withCredentials: true
+            });
+
+            if (res.data.success) {
+                setAuth(res.data.user, res.data.accessToken);
+                console.log("STEP 1: API RESPONSE 👉", res.data);
+                console.log("STEP 2: USER 👉", res.data.user);
+                console.log("STEP 3: TOKEN 👉", res.data.accessToken);
+
+                console.log(useAuthStore.getState());
+
+
+
+
+
+                toast.success("Logged in successfully 😄", {
                     position: "top-center",
-                    autoClose: 4000,
-                    hideProgressBar: false,
-                    closeOnClick: true,
-                    pauseOnHover: true,
-                    draggable: true,
+                    autoClose: 2000,
                     theme: "colored",
                 });
 
-                console.log("Backend error 👉", error.response?.data);
+                setLoading(false);
+
+
+                setTimeout(() => {
+                    navigate('/');
+                }, 2000);
             }
+        } catch (error) {
+            setLoading(false);
+            const backendMessage = error.response?.data?.message || "Something went wrong ❌";
+
+            toast.error(backendMessage, {
+                position: "top-center",
+                autoClose: 4000,
+                theme: "colored",
+            });
+
+            console.log("Backend error 👉", error.response?.data);
         }
-    
+    }
+
     return (
         <div className="min-h-screen flex items-center justify-center 
 bg-gradient-to-br from-white via-blue-50 to-pink-50
@@ -83,17 +93,17 @@ bg-gradient-to-br from-white via-blue-50 to-pink-50
 
 
             <Card className="w-full max-w-sm rounded-2xl border border-border/60 shadow-2xl bg-card">
-<ToastContainer
-        position="top-center"
-        autoClose={3000}
-        hideProgressBar={false}
-        newestOnTop
-        closeOnClick
-        pauseOnHover
-        draggable
-        theme="dark"  
-        limit={3}
-      />
+                <ToastContainer
+                    position="top-center"
+                    autoClose={3000}
+                    hideProgressBar={false}
+                    newestOnTop
+                    closeOnClick
+                    pauseOnHover
+                    draggable
+                    theme="dark"
+                    limit={3}
+                />
 
                 {/* HEADER */}
                 <CardHeader className="space-y-3 pb-6">
@@ -156,7 +166,7 @@ bg-gradient-to-br from-white via-blue-50 to-pink-50
                                     name="password"
                                     placeholder="Enter Your Password"
                                     value={formData.password}
-                                       onChange={handleChange}
+                                    onChange={handleChange}
                                     type={showPassword ? "text" : "password"}
                                     className="h-11 rounded-xl pr-10"
                                     required
@@ -182,17 +192,17 @@ bg-gradient-to-br from-white via-blue-50 to-pink-50
 
                 {/* FOOTER */}
                 <CardFooter className="flex flex-col gap-4 pt-6">
-                      <Button
-         
-              disabled={loading}
-              onClick={handleLogin}
-              className="w-full h-11 rounded-xl 
+                    <Button
+
+                        disabled={loading}
+                        onClick={handleLogin}
+                        className="w-full h-11 rounded-xl 
               bg-blue-600 hover:bg-blue-700 text-white 
               flex items-center justify-center gap-2"
-            >
-              {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              {loading ? "Logging....." : "Login"}
-            </Button>
+                    >
+                        {loading && <Loader2 className="h-4 w-4 animate-spin" />}
+                        {loading ? "Logging....." : "Login"}
+                    </Button>
 
                     <div className="relative w-full">
                         <div className="absolute inset-0 flex items-center">

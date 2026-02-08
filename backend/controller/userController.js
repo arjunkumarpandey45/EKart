@@ -1,9 +1,10 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import  User  from "../model/usermodel.js";
+import User from "../model/usermodel.js";
 import { Session } from "../model/sessionModel.js";
 import { emailVerify } from "../emailVerify/emailVerify.js";
 import { sentOtpMail } from "../emailVerify/otpVerify.js";
+import cloudnairy from "../utils/cloudnairy.js";
 
 /* =========================
    REGISTER
@@ -11,7 +12,7 @@ import { sentOtpMail } from "../emailVerify/otpVerify.js";
 export const register = async (req, res) => {
   try {
     const { email, firstName, lastName, password } = req.body;
-console.log("REQ BODY 👉", req.body);
+    console.log("REQ BODY 👉", req.body);
 
     if (!email || !firstName || !lastName || !password) {
       return res.status(400).json({
@@ -242,28 +243,28 @@ export const login = async (req, res) => {
     }
     await Session.deleteOne({ userId: user._id, email: user.email });
     await Session.create({ userId: user._id, email: user.email });
-  console.log("LOGIN RESPONSE USER 👉", {
-  _id: user._id,
-  firstName: user.firstName,
-  lastName: user.lastName,
-  email: user.email,
-});
-  return res.status(200).json({
-  success: true,
-  
-  message: `Welcome back Mr ${user.firstName}`,
-  
-  user: {
-    _id: user._id,
-    firstName: user.firstName,
-    lastName: user.lastName,
-    email: user.email,
-    role: user.role,
-    isVerified: user.isVerified,
-  },
-  accessToken,
-  refreshToken,
-});
+    console.log("LOGIN RESPONSE USER 👉", {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+    });
+    return res.status(200).json({
+      success: true,
+
+      message: `Welcome back Mr ${user.firstName}`,
+
+      user: {
+        _id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        role: user.role,
+        isVerified: user.isVerified,
+      },
+      accessToken,
+      refreshToken,
+    });
 
   } catch (error) {
     return res.status(500).json({
@@ -426,5 +427,64 @@ export const getUserById = async (req, res) => {
     return res.status(200).json({ success: true, message: "user founded" })
   } catch (error) {
     return res.status(500).json({ success: false, message: error.message })
+  }
+}
+export const updateUser = async (req, res) => {
+  try {
+    const updateUserById = req.params.id
+    const loggedUser = req.user
+    const { firstName, lastName, email, zipcode, phoneNumber, address, city } = req.body
+    if (loggedUser._id.toString() !== updateUserById && loggedUser.role !== 'admin') {
+      return res.status(403).json({
+        success: false,
+        message: "You'r not allowed to update this profile"
+      })
+    }
+    let user = await User.findById(updateUser)
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found"
+      })
+    }
+    let profilePicURL = user.profilePic
+    let profilePicPublicId = user.profilePicPublicId
+    if (req.file) {
+      if (profilePicPublicId) {
+        await cloudnairy.uploader.destroy(profilePicPublicId)
+      }
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudnairy.uploader.upload_stream(
+          { folder: "profiles" },
+          (error, result) => {
+            if (error) reject
+            else resolve(result)
+          }
+        )
+        stream.end(req.file.buffer)
+      })
+      profilePicURL = uploadResult.secure_url
+      profilePicPublicId = uploadResult.public_id
+    }
+    user.firstName = firstName || user.firstName
+    user.lastName = lastName || user.lastName
+    user.city = city || user.city
+    user.address = address || user.address
+    user.zipcode = zipcode || user.zipcode
+    user.email = email || user.email
+    user.phoneNumber = phoneNumber || user.phoneNumber
+    user.role = role;
+    user.profilePic = profilePicURL
+    user.profilePicPublicId = profilePicPublicId
+    const updatedUser=await user.save()
+    return res.status(200).json({
+      success:true,
+      message :"User Updated SucessFulyy",user:updatedUser
+    })
+  } catch (error) {
+    return res.status(400).json({
+      success: false,
+      message: error.message
+    })
   }
 }

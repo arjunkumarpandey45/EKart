@@ -4,13 +4,13 @@ import { useParams } from "react-router";
 import useAuthStore from "@/store/authStore";
 import { create } from "zustand";
 import profile from "../assets/profile.png";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
 import axios from "axios";
 function Profile() {
   const { user, accessToken, setAuth } = useAuthStore()
   const params = useParams()
   const userId = params.userId
-  const [loading,setLoading]=useState(false)
+  const [loading, setLoading] = useState(false)
   const [updatedUser, setUpdatedUser] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
@@ -56,19 +56,31 @@ function Profile() {
         }
       })
       if (res.data.success) {
-        toast.success("Profile Updated Succesfully")
+        toast.success("Updated successfully 😄", {
+          position: "top-center",
+          autoClose: 2000,
+          hideProgressBar: false,
+          closeOnClick: true,
+          pauseOnHover: true,
+          draggable: true,
+          progress: undefined,
+
+        });
         setAuth(res.data.user, accessToken);
+        setLoading(false)
+       
       }
     } catch (error) {
       console.log(error)
       toast.error(error.response?.data?.message || "Failed to update");
-    }finally{
       setLoading(false)
     }
   }
   return (
     <section className="min-h-screen bg-[#F8FAFC] pt-24 pb-12 px-4 sm:px-6">
+  
       <div className="mx-auto max-w-2xl">
+        <ToastContainer></ToastContainer>
         {/* Profile Heading */}
         <div className="mb-10 text-center">
           <h1 className="text-4xl font-extrabold text-gray-900 tracking-tight">Edit Profile</h1>
@@ -91,7 +103,7 @@ function Profile() {
 
         {/* Vertical Form Fields */}
         <div className="bg-white rounded-[2.5rem] p-8 md:p-10 shadow-sm border border-gray-100">
-          <form className="space-y-8" onSubmit={handleSubmit}> {/* Har field ke beech 32px ka gap */}
+          <form className="space-y-8" onSubmit={handleSubmit}>
 
             {/* --- POINT 1: FIRST NAME --- */}
 

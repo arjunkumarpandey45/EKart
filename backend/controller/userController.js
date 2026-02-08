@@ -434,9 +434,9 @@ export const updateUser = async (req, res) => {
     const updateUserById = req.params.id
     const loggedUser = req.user
     console.log("1. URL Params ID:", req.params.id);
-console.log("2. Token User ID:", req.user._id.toString());
-console.log("3. Role:", req.user.role);
-    const { firstName, lastName, email, zipcode, phoneNumber, address,role ,city } = req.body
+    console.log("2. Token User ID:", req.user._id.toString());
+    console.log("3. Role:", req.user.role);
+    const { firstName, lastName, email, zipcode, phoneNumber, address, role, city } = req.body
     if (loggedUser._id.toString() !== updateUserById && loggedUser.role !== 'admin') {
       return res.status(403).json({
         success: false,
@@ -479,10 +479,10 @@ console.log("3. Role:", req.user.role);
     user.role = role;
     user.profilePic = profilePicURL
     user.profilePicPublicId = profilePicPublicId
-    const updatedUser=await user.save()
+    const updatedUser = await user.save()
     return res.status(200).json({
-      success:true,
-      message :"User Updated SucessFulyy",user:updatedUser
+      success: true,
+      message: "User Updated SucessFulyy", user: updatedUser
     })
   } catch (error) {
     return res.status(400).json({

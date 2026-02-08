@@ -10,25 +10,29 @@ function Navbar() {
   const [loading, setLoading] = useState(false)
   const { user, accessToken, logout } = useAuthStore();
   const logoutHandle = async () => {
+    setLoading(true)
     console.log("NAVBAR STATE CHECK 👉", {
       isUserPresent: !!user,
       userData: user,
       token: accessToken ? "Token Received ✅" : "No Token ❌"
     });
-    setLoading(true)
+
     try {
+
       const res = await axios.post(`http://localhost:3000/api/user/logout`, {}, {
         headers: {
           Authorization: `Bearer ${accessToken}`
         }
 
       })
-      logout()
-      if (res.data.success) {
 
+
+      if (res.data.success) {
+        logout();
+        localStorage.removeItem("auth-storage");
         toast.success("Logout successfully 😄", {
           position: "top-center",
-          autoClose: 500,
+          autoClose: 2000,
           hideProgressBar: false,
           closeOnClick: true,
           pauseOnHover: true,
@@ -36,7 +40,6 @@ function Navbar() {
           progress: undefined,
           theme: "colored",
         });
-
       }
 
     } catch (error) {
@@ -51,29 +54,45 @@ function Navbar() {
         theme: "colored",
       });
     } finally {
-      setLoading(false)
-    }
-    setTimeout(() => {
-      window.location.reload()
-    }, 1000);
-  }
 
+      setLoading(false)
+
+    }
+
+  }
   return (
     <div className="fixed top-0 z-50 w-full">
-      <ToastContainer></ToastContainer>
+
       <div className="mx-auto flex max-w-7xl items-center justify-between px-5 md:px-10 py-4
         bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
 
         {/* LOGO */}
         <Link
-          href="#home"
+          to={'/'}
           className="text-2xl font-bold text-gray-900 tracking-wide hover:text-indigo-600 transition"
         >
           E-Kart ✨
         </Link>
-        <Link href="#profile" className="hover:text-indigo-600 block md:hidden transition-colors cursor-pointer">
-          {user ? `Hi, ${user.firstName}` : "Welcome, Guest"}
+
+        {user ? <Link
+          to={`/profile/${user._id}`}
+          className="
+    block md:hidden
+     inline-flex items-center
+    rounded-full
+    px-4 py-1.5
+    text-sm font-medium
+    text-black
+    bg-white
+    border border-black
+    transition-colors duration-200
+    hover:bg-blue-600 hover:text-white hover:border-sky-300
+    active:scale-95
+  "
+        >
+          Hi, {user.firstName}
         </Link>
+          : <Link className="cursor-pointer block md:hidden group relative flex items-center gap-2 cursor-pointer overflow-hidden rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 border border-gray-200 hover:border-red-200  hover:shadow-lg hover:shadow-red-500/10 active:scale-95" to={'/login'}>   <span className="h-2 w-2 rounded-full animate-pulse cursor-pointer  group bg-green-300"></span><b>Login</b> <LogIn className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>}
         {/* DESKTOP LINKS */}
         <ul className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
           <li><Link to={'/'} className="hover:text-indigo-600">Home</Link></li>
@@ -83,7 +102,26 @@ function Navbar() {
 
           <li>
             <h1 className="hover:text-indigo-600 transition-colors cursor-pointer"><b>
-              {user ? <Link className="cursor-pointer" to={`/profile/${user._id}`}> Hi,{user.firstName}</Link> : <Link className="cursor-pointer" to={'/signup'}>Welcome, Guest</Link>}
+              {user ? <Link
+                to={`/profile/${user._id}`}
+                className="
+    inline-flex items-center
+    rounded-full
+    px-4 py-1.5
+    text-sm font-medium
+    text-black
+    bg-white
+    border border-black
+    transition-colors duration-200
+    hover:bg-blue-600 hover:text-white hover:border-sky-300
+    active:scale-95
+  "
+              >
+                <b> Hi, {user.firstName}</b>
+              </Link>
+
+                : <Link className="cursor-pointer group relative flex items-center gap-2 cursor-pointer overflow-hidden rounded-full bg-blue-600 px-6 py-2.5 text-sm font-semibold text-white transition-all duration-300 border border-gray-200 hover:border-red-200  hover:shadow-lg hover:shadow-red-500/10 active:scale-95" to={'/login'}>   <span className="h-2 w-2 rounded-full animate-pulse cursor-pointer  group bg-green-300"></span><b>Login</b> <LogIn className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" /></Link>
+              }
             </b> </h1>
           </li>
           {/* DESKTOP BUTTON */}
@@ -94,7 +132,7 @@ function Navbar() {
 
               <button
                 onClick={logoutHandle}
-                className="group relative flex items-center gap-2 cursor-pointer overflow-hidden rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-300 border border-gray-200 hover:border-red-200 hover:text-red-600 hover:shadow-lg hover:shadow-red-500/10 active:scale-95"
+                className="group relative flex items-center gap-2 cursor-pointer  bg-white px-6 py-2.5 text-sm font-semibold text-gray-700 transition-all duration-300 border border-gray-200 hover:border-red-200 hover:text-red-600 hover:shadow-lg hover:shadow-red-500/10 active:scale-95"
               >
 
                 <span className="h-2 w-2 rounded-full animate-pulse cursor-pointer  group-hover:bg-red-600"></span>
@@ -162,7 +200,7 @@ function Navbar() {
           {/* Links container: Left aligned */}
           <ul className="flex flex-col gap-2 px-6 pt-5 pb-3 text-gray-700 text-sm font-medium">
             <li className="border-b border-gray-50 pb-2">
-              <Link onClick={() => setOpen(false)}to={'/'} className="hover:text-indigo-600 transition-colors">Home</Link>
+              <Link onClick={() => setOpen(false)} to={'/'} className="hover:text-indigo-600 transition-colors">Home</Link>
             </li>
             <li className="border-b border-gray-50 pb-2">
               <Link onClick={() => setOpen(false)} to={'/about'} className="hover:text-indigo-600 transition-colors">About</Link>
@@ -171,7 +209,7 @@ function Navbar() {
               <Link onClick={() => setOpen(false)} to={'/products'} className="hover:text-indigo-600 transition-colors">Products</Link>
             </li>
             <li className="border-b border-gray-50 pb-2">
-              <Link onClick={() => setOpen(false)}to={'/contact'} className="hover:text-indigo-600 transition-colors">Contact</Link>
+              <Link onClick={() => setOpen(false)} to={'/contact'} className="hover:text-indigo-600 transition-colors">Contact</Link>
             </li>
           </ul>
 

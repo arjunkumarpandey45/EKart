@@ -4,10 +4,10 @@ const connectDB = async () => {
   if (mongoose.connection.readyState === 1) return;
 
   const connectionPaths = [
-    // { name: "Atlas Default", uri: process.env.MONGO_URI_ATLAS_DEFAULT, checkPrimary: false },
-    // { name: "Atlas SRV", uri: process.env.MONGO_URI_SRV, checkPrimary: false },
-    // { name: "Direct Shard 00", uri: process.env.SHARD_00, checkPrimary: true },
-    // { name: "Direct Shard 01", uri: process.env.SHARD_01, checkPrimary: true },
+    { name: "Atlas Default", uri: process.env.MONGO_URI_ATLAS_DEFAULT, checkPrimary: false },
+    { name: "Atlas SRV", uri: process.env.MONGO_URI_SRV, checkPrimary: false },
+    { name: "Direct Shard 00", uri: process.env.SHARD_00, checkPrimary: true },
+    { name: "Direct Shard 01", uri: process.env.SHARD_01, checkPrimary: true },
     { name: "Direct Shard 02", uri: process.env.SHARD_02, checkPrimary: true }
   ];
 

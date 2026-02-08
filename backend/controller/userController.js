@@ -433,14 +433,17 @@ export const updateUser = async (req, res) => {
   try {
     const updateUserById = req.params.id
     const loggedUser = req.user
-    const { firstName, lastName, email, zipcode, phoneNumber, address, city } = req.body
+    console.log("1. URL Params ID:", req.params.id);
+console.log("2. Token User ID:", req.user._id.toString());
+console.log("3. Role:", req.user.role);
+    const { firstName, lastName, email, zipcode, phoneNumber, address,role ,city } = req.body
     if (loggedUser._id.toString() !== updateUserById && loggedUser.role !== 'admin') {
       return res.status(403).json({
         success: false,
         message: "You'r not allowed to update this profile"
       })
     }
-    let user = await User.findById(updateUser)
+    let user = await User.findById(updateUserById)
     if (!user) {
       return res.status(404).json({
         success: false,
@@ -457,7 +460,7 @@ export const updateUser = async (req, res) => {
         const stream = cloudnairy.uploader.upload_stream(
           { folder: "profiles" },
           (error, result) => {
-            if (error) reject
+            if (error) reject(error)
             else resolve(result)
           }
         )

@@ -1,5 +1,5 @@
 import React from 'react'
-import { BrowserRouter, createBrowserRouter, RouterProvider } from 'react-router'
+import {  createBrowserRouter, RouterProvider } from 'react-router'
 import Navbar from './components/Navbar'
 
 import Login from './pages/Login'
@@ -30,7 +30,7 @@ function App() {
     
     ,
     {
-      path: '/profile',
+      path: '/profile/:userId',
       element: <><Navbar/><Profile/></>
     },
     {

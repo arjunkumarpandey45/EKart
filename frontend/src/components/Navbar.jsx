@@ -65,25 +65,25 @@ function Navbar() {
         bg-white/90 backdrop-blur-md border-b border-gray-200 shadow-sm">
 
         {/* LOGO */}
-        <a
+        <Link
           href="#home"
           className="text-2xl font-bold text-gray-900 tracking-wide hover:text-indigo-600 transition"
         >
           E-Kart ✨
-        </a>
-        <a href="#profile" className="hover:text-indigo-600 block md:hidden transition-colors cursor-pointer">
+        </Link>
+        <Link href="#profile" className="hover:text-indigo-600 block md:hidden transition-colors cursor-pointer">
           {user ? `Hi, ${user.firstName}` : "Welcome, Guest"}
-        </a>
+        </Link>
         {/* DESKTOP LINKS */}
         <ul className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
-          <li><a href="#home" className="hover:text-indigo-600">Home</a></li>
-          <li><a href="#about" className="hover:text-indigo-600">About</a></li>
-          <li><a href="#projects" className="hover:text-indigo-600">Projects</a></li>
-          <li><a href="#contact" className="hover:text-indigo-600">Contact</a></li>
+          <li><Link to={'/'} className="hover:text-indigo-600">Home</Link></li>
+          <li><Link to={'/about'} className="hover:text-indigo-600">About</Link></li>
+          <li><Link to={'/products'} className="hover:text-indigo-600">Projects</Link></li>
+          <li><Link to={'/contact'} className="hover:text-indigo-600">Contact</Link></li>
 
           <li>
             <h1 className="hover:text-indigo-600 transition-colors cursor-pointer"><b>
-              {user ? <a className="cursor-pointer" href="/profile"> Hi,{user.firstName}</a> : <a className="cursor-pointer" href="/signup">Welcome, Guest</a>}
+              {user ? <Link className="cursor-pointer" to={`/profile/${user._id}`}> Hi,{user.firstName}</Link> : <Link className="cursor-pointer" to={'/signup'}>Welcome, Guest</Link>}
             </b> </h1>
           </li>
           {/* DESKTOP BUTTON */}
@@ -162,16 +162,16 @@ function Navbar() {
           {/* Links container: Left aligned */}
           <ul className="flex flex-col gap-2 px-6 pt-5 pb-3 text-gray-700 text-sm font-medium">
             <li className="border-b border-gray-50 pb-2">
-              <Link onClick={() => setOpen(false)} to="/" className="hover:text-indigo-600 transition-colors">Home</Link>
+              <Link onClick={() => setOpen(false)}to={'/'} className="hover:text-indigo-600 transition-colors">Home</Link>
             </li>
             <li className="border-b border-gray-50 pb-2">
-              <a onClick={() => setOpen(false)} href="#about" className="hover:text-indigo-600 transition-colors">About</a>
+              <Link onClick={() => setOpen(false)} to={'/about'} className="hover:text-indigo-600 transition-colors">About</Link>
             </li>
             <li className="border-b border-gray-50 pb-2">
-              <a onClick={() => setOpen(false)} href="#projects" className="hover:text-indigo-600 transition-colors">Projects</a>
+              <Link onClick={() => setOpen(false)} to={'/products'} className="hover:text-indigo-600 transition-colors">Products</Link>
             </li>
             <li className="border-b border-gray-50 pb-2">
-              <a onClick={() => setOpen(false)} href="#contact" className="hover:text-indigo-600 transition-colors">Contact</a>
+              <Link onClick={() => setOpen(false)}to={'/contact'} className="hover:text-indigo-600 transition-colors">Contact</Link>
             </li>
           </ul>
 

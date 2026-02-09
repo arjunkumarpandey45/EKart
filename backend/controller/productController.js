@@ -1,20 +1,25 @@
 import { Product } from "../model/productModel.js";
-import cloudnairy from "../utils/cloudnairy";
+import cloudnairy from "../utils/cloudnairy.js";
 import getdataURI from "../utils/dataUri.js";
 
 export const addProduct = async (req, res) => {
+    console.log("Terminal Check -> Body:", req.body); 
+    console.log("Terminal Check -> Files:", req.files);
   try {
     const { productName, productDisc, productPrice, category, brand } =
       req.body;
+      const userId = req.user._id;
     if (!productDisc || !productName || !productPrice || !category || !brand) {
+        console.log("Terminal Check -> Body:", req.body); 
+    console.log("Terminal Check -> Files:", req.files);
       return res.status(400).json({
         success: false,
         message: "All fields are required",
       });
     }
     const productImg = [];
-    if (req.file && req.file.length > 0) {
-      for (let file of files) {
+    if (req.files && req.files.length > 0) {
+      for (let file of req.files) {
         const fileURI = getdataURI(file);
         const result =await cloudnairy.uploader.upload(fileURI,{
             folder:"E-kart Products"

@@ -38,11 +38,9 @@ export const register = async (req, res) => {
       password: hashedPassword,
     });
 
-    const token = jwt.sign(
-      { id: newUser._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "5m" }
-    );
+    const token = jwt.sign({ id: newUser._id }, process.env.JWT_SECRET, {
+      expiresIn: "5m",
+    });
 
     await emailVerify(token, email);
 
@@ -54,7 +52,7 @@ export const register = async (req, res) => {
       message: "User registered successfully. Please verify your email.",
       userName: newUser.firstName,
       useremail: newUser.email,
-      token: newUser.token
+      token: newUser.token,
     });
   } catch (error) {
     return res.status(500).json({
@@ -104,7 +102,6 @@ export const Verification = async (req, res) => {
         message: "User not found",
       });
     }
-
 
     if (user.token !== token) {
       return res.status(400).json({
@@ -158,11 +155,9 @@ export const reVerification = async (req, res) => {
       });
     }
 
-    const token = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "5m" }
-    );
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "5m",
+    });
 
     await emailVerify(token, email);
 
@@ -172,7 +167,7 @@ export const reVerification = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: "Verification email sent",
-      token: user.token
+      token: user.token,
     });
   } catch (error) {
     return res.status(500).json({
@@ -220,26 +215,25 @@ export const login = async (req, res) => {
       });
     }
 
-    const accessToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "11d" }
-    );
+    const accessToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "11d",
+    });
 
-    const refreshToken = jwt.sign(
-      { id: user._id },
-      process.env.JWT_SECRET,
-      { expiresIn: "40d" }
-    );
+    const refreshToken = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+      expiresIn: "40d",
+    });
 
     user.isLoggedIn = true;
     await user.save();
 
-    const session = await Session.findOne({ userId: user._id, email: user.email });
+    const session = await Session.findOne({
+      userId: user._id,
+      email: user.email,
+    });
     if (session) {
       return res.status(401).json({
         success: false,
-        message: "Already Looged In !!"
+        message: "Already Looged In !!",
       });
     }
     const userWithoutPassword = user.toObject();
@@ -255,11 +249,10 @@ export const login = async (req, res) => {
     return res.status(200).json({
       success: true,
       message: `Welcome back Mr ${user.firstName}`,
-      user: userWithoutPassword, 
+      user: userWithoutPassword,
       accessToken,
       refreshToken,
     });
-
   } catch (error) {
     return res.status(500).json({
       success: false,
@@ -272,26 +265,31 @@ export const login = async (req, res) => {
 ========================= */
 export const logout = async (req, res) => {
   try {
-    const userId = req.user._id
-    const session = await Session.findOne({ userId: userId })
+    const userId = req.user._id;
+    const session = await Session.findOne({ userId: userId });
     if (!session) {
-      return res.status(401).json({ success: false, message: "Already Logged Out !" });
+      return res
+        .status(401)
+        .json({ success: false, message: "Already Logged Out !" });
     }
 
-
     await Session.deleteMany({ userId: userId });
-    await User.findByIdAndUpdate(userId, { isLoggedIn: false })
-    return res.status(200).json({ success: true, message: "Logged out successfully", });
+    await User.findByIdAndUpdate(userId, { isLoggedIn: false });
+    return res
+      .status(200)
+      .json({ success: true, message: "Logged out successfully" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: "Logout error: " + error.message, });
+    return res
+      .status(500)
+      .json({ success: false, message: "Logout error: " + error.message });
   }
-}
+};
 /* =========================
    FORGOT PASSWORD
 ========================= */
 export const forgotPassword = async (req, res) => {
   try {
-    const { email } = req.body
+    const { email } = req.body;
     console.log("EMAIL RECEIVED:", email);
 
     if (!email) {
@@ -300,188 +298,216 @@ export const forgotPassword = async (req, res) => {
         message: "Email is required",
       });
     }
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: "User not found" })
+      return res
+        .status(400)
+        .json({ success: false, message: "User not found" });
     }
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
-    const otpExpire = new Date(Date.now() + 10 * 60 * 1000)
-    user.otp = otp
-    user.otpExpire = otpExpire
-    await user.save()
-    await sentOtpMail(email, otp)
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const otpExpire = new Date(Date.now() + 10 * 60 * 1000);
+    user.otp = otp;
+    user.otpExpire = otpExpire;
+    await user.save();
+    await sentOtpMail(email, otp);
     return res.status(200).json({
       success: true,
       message: "OTP sent successfully",
     });
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message })
+    return res.status(400).json({ success: false, message: error.message });
   }
-}
+};
 /* =========================
    VERIFY OTP
 ========================= */
 export const verifyOTP = async (req, res) => {
   try {
-    const { otp } = req.body
-    const { email } = req.params
+    const { otp } = req.body;
+    const { email } = req.params;
     if (!otp) {
       return res.status(400).json({
         success: false,
-        message: "Otp requires"
-      })
+        message: "Otp requires",
+      });
     }
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (!user) {
       return res.status(400).json({
         success: false,
-        message: "User Not found !!"
-      })
+        message: "User Not found !!",
+      });
     }
     if (!user.otp || !user.otpExpire) {
       return res.status(400).json({
         success: false,
-        message: "otp expired or already used !!"
-      })
+        message: "otp expired or already used !!",
+      });
     }
     if (user.otpExpire < new Date()) {
       return res.status(400).json({
         success: false,
-        message: "Otp Expired , Please Try Again..."
-      })
+        message: "Otp Expired , Please Try Again...",
+      });
     }
     if (otp !== user.otp) {
       return res.status(400).json({
         success: false,
-        message: "Otp is Incorrect,Try again.."
-      })
+        message: "Otp is Incorrect,Try again..",
+      });
     }
     user.otp = null;
-    user.otpExpire = null
-    await user.save()
+    user.otpExpire = null;
+    await user.save();
     return res.status(200).json({
       success: true,
-      message: "Otp Verified ,Yeah..."
-    })
+      message: "Otp Verified ,Yeah...",
+    });
   } catch (error) {
-    return res.status(400).json({ success: false, message: "Oh " + error.message })
+    return res
+      .status(400)
+      .json({ success: false, message: "Oh " + error.message });
   }
-}
+};
 /* =========================
 CHANGE PASSWORD
 ========================= */
 export const changePassword = async (req, res) => {
   try {
-    const { newPassword, confirmPassword } = req.body
-    const { email } = req.params
+    const { newPassword, confirmPassword } = req.body;
+    const { email } = req.params;
 
-
-    const user = await User.findOne({ email })
+    const user = await User.findOne({ email });
     if (!user) {
-      return res.status(400).json({ success: false, message: "user not found" })
+      return res
+        .status(400)
+        .json({ success: false, message: "user not found" });
     }
     if (!newPassword || !confirmPassword) {
-      return res.status(400).json({ success: false, message: "All Fields are required" })
+      return res
+        .status(400)
+        .json({ success: false, message: "All Fields are required" });
     }
     if (newPassword !== confirmPassword) {
-      return res.status(400).json({ success: false, message: "Password didn't matched" })
+      return res
+        .status(400)
+        .json({ success: false, message: "Password didn't matched" });
     }
-    const hashedPassword = await bcrypt.hash(newPassword, 10)
-    user.password = hashedPassword
-    await user.save()
-    return res.status(200).json({ success: false, message: "Password Changed Sucessfully.." })
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+    user.password = hashedPassword;
+    await user.save();
+    return res
+      .status(200)
+      .json({ success: false, message: "Password Changed Sucessfully.." });
   } catch (error) {
-    return res.status(400).json({ success: false, message: error.message })
+    return res.status(400).json({ success: false, message: error.message });
   }
-}
+};
 /* =========================
   All USER
 ========================= */
 export const allUser = async (req, res) => {
   try {
-    const users = await User.find()
+    const users = await User.find();
     return res.status(200).json({
       success: true,
-      users
-    })
+      users,
+    });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message })
+    return res.status(500).json({ success: false, message: error.message });
   }
-}
+};
 /* =========================
   Get User By Id
 ========================= */
 export const getUserById = async (req, res) => {
   try {
-    const { userId } = req.params
-    const user = await User.findById({ userId }).select("-password -otp -otpExpire -token")
+    const { userId } = req.params;
+    const user = await User.findById({ userId }).select(
+      "-password -otp -otpExpire -token",
+    );
     if (!user) {
-      return res.status(400).json({ success: false, message: "user not found" })
+      return res
+        .status(400)
+        .json({ success: false, message: "user not found" });
     }
-    return res.status(200).json({ success: true, message: "user founded" })
+    return res.status(200).json({ success: true, message: "user founded" });
   } catch (error) {
-    return res.status(500).json({ success: false, message: error.message })
+    return res.status(500).json({ success: false, message: error.message });
   }
-}
+};
 export const updateUser = async (req, res) => {
   try {
-    const updateUserById = req.params.id
-    const loggedUser = req.user
+    const updateUserById = req.params.id;
+    const loggedUser = req.user;
     console.log("1. URL Params ID:", req.params.id);
     console.log("2. Token User ID:", req.user._id.toString());
     console.log("3. Role:", req.user.role);
-    const { firstName, lastName, email, zipcode, phoneNumber, address, role, city } = req.body
-    if (loggedUser._id.toString() !== updateUserById && loggedUser.role !== 'admin') {
+    const {
+      firstName,
+      lastName,
+      email,
+      zipcode,
+      phoneNumber,
+      address,
+      role,
+      city,
+    } = req.body;
+    if (
+      loggedUser._id.toString() !== updateUserById &&
+      loggedUser.role !== "admin"
+    ) {
       return res.status(403).json({
         success: false,
-        message: "You'r not allowed to update this profile"
-      })
+        message: "You'r not allowed to update this profile",
+      });
     }
-    let user = await User.findById(updateUserById)
+    let user = await User.findById(updateUserById);
     if (!user) {
       return res.status(404).json({
         success: false,
-        message: "User not found"
-      })
+        message: "User not found",
+      });
     }
-    let profilePicURL = user.profilePic
-    let profilePicPublicId = user.profilePicPublicId
+    let profilePicURL = user.profilePic;
+    let profilePicPublicId = user.profilePicPublicId;
     if (req.file) {
       if (profilePicPublicId) {
-        await cloudnairy.uploader.destroy(profilePicPublicId)
+        await cloudnairy.uploader.destroy(profilePicPublicId);
       }
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudnairy.uploader.upload_stream(
           { folder: "profiles" },
           (error, result) => {
-            if (error) reject(error)
-            else resolve(result)
-          }
-        )
-        stream.end(req.file.buffer)
-      })
-      profilePicURL = uploadResult.secure_url
-      profilePicPublicId = uploadResult.public_id
+            if (error) reject(error);
+            else resolve(result);
+          },
+        );
+        stream.end(req.file.buffer);
+      });
+      profilePicURL = uploadResult.secure_url;
+      profilePicPublicId = uploadResult.public_id;
     }
-    user.firstName = firstName || user.firstName
-    user.lastName = lastName || user.lastName
-    user.city = city || user.city
-    user.address = address || user.address
-    user.zipcode = zipcode || user.zipcode
-    user.email = email || user.email
-    user.phoneNumber = phoneNumber || user.phoneNumber
+    user.firstName = firstName || user.firstName;
+    user.lastName = lastName || user.lastName;
+    user.city = city || user.city;
+    user.address = address || user.address;
+    user.zipcode = zipcode || user.zipcode;
+    user.email = email || user.email;
+    user.phoneNumber = phoneNumber || user.phoneNumber;
     user.role = role;
-    user.profilePic = profilePicURL
-    user.profilePicPublicId = profilePicPublicId
-    const updatedUser = await user.save()
+    user.profilePic = profilePicURL;
+    user.profilePicPublicId = profilePicPublicId;
+    const updatedUser = await user.save();
     return res.status(200).json({
       success: true,
-      message: "User Updated SucessFulyy", user: updatedUser
-    })
+      message: "User Updated SucessFulyy",
+      user: updatedUser,
+    });
   } catch (error) {
     return res.status(400).json({
       success: false,
-      message: error.message
-    })
+      message: error.message,
+    });
   }
-}
+};

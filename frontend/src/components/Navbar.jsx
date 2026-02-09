@@ -2,12 +2,13 @@ import useAuthStore from "@/store/authStore";
 import axios from "axios";
 import { Loader2, LogIn, LogOut } from "lucide-react";
 import React, { useState } from "react";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { toast, ToastContainer } from "react-toastify";
 
 function Navbar() {
   const [open, setOpen] = useState(false);
   const [loading, setLoading] = useState(false)
+  const navigate=useNavigate()
   const { user, accessToken, logout } = useAuthStore();
   const logoutHandle = async () => {
     setLoading(true)
@@ -40,6 +41,7 @@ function Navbar() {
           progress: undefined,
           theme: "colored",
         });
+        navigate('/')
       }
 
     } catch (error) {

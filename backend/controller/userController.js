@@ -197,6 +197,7 @@ export const login = async (req, res) => {
     }
 
     const user = await User.findOne({ email }).select("+password");
+
     if (!user) {
       return res.status(400).json({
         success: false,
@@ -241,6 +242,8 @@ export const login = async (req, res) => {
         message: "Already Looged In !!"
       });
     }
+    const userWithoutPassword = user.toObject();
+    delete userWithoutPassword.password;
     await Session.deleteOne({ userId: user._id, email: user.email });
     await Session.create({ userId: user._id, email: user.email });
     console.log("LOGIN RESPONSE USER 👉", {
@@ -251,17 +254,8 @@ export const login = async (req, res) => {
     });
     return res.status(200).json({
       success: true,
-
       message: `Welcome back Mr ${user.firstName}`,
-
-      user: {
-        _id: user._id,
-        firstName: user.firstName,
-        lastName: user.lastName,
-        email: user.email,
-        role: user.role,
-        isVerified: user.isVerified,
-      },
+      user: userWithoutPassword, 
       accessToken,
       refreshToken,
     });

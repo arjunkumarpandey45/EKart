@@ -99,7 +99,7 @@ function Navbar() {
         <ul className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-700">
           <li><Link to={'/'} className="hover:text-indigo-600">Home</Link></li>
           <li><Link to={'/about'} className="hover:text-indigo-600">About</Link></li>
-          <li><Link to={'/products'} className="hover:text-indigo-600">Projects</Link></li>
+          <li><Link to={'/products'} className="hover:text-indigo-600">Products</Link></li>
           <li><Link to={'/contact'} className="hover:text-indigo-600">Contact</Link></li>
 
           <li>

@@ -14,7 +14,7 @@ function Profile() {
   const [updatedUser, setUpdatedUser] = useState({
     firstName: user?.firstName || "",
     lastName: user?.lastName || "",
-    email: user?.email || "",
+    email: user?.email,
     phoneNumber: user?.phoneNumber || "",
     city: user?.city || "",
     zipcode: user?.zipcode || "",
@@ -40,7 +40,7 @@ function Profile() {
 
       formData.append("firstName", updatedUser.firstName)
       formData.append("lastName", updatedUser.lastName)
-      formData.append("email", updatedUser.email)
+      // formData.append("email", updatedUser.email)
       formData.append("phoneNumber", updatedUser.phoneNumber)
       formData.append("city", updatedUser.city)
       formData.append("zipcode", updatedUser.zipcode)
@@ -146,11 +146,16 @@ function Profile() {
                 <input
                   type="email"
                   name="email"
+                  readOnly
+                  
                   value={updatedUser.email}
                   onChange={handleChange}
                   placeholder="name@example.com"
-                  className="w-full pl-12 pr-4 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white transition-all outline-none"
+                  className="w-full pl-12 cursor-not-allowed pr-4 py-4 rounded-2xl bg-gray-50 border-2 border-transparent focus:border-indigo-500 focus:bg-white transition-all outline-none"
                 />
+                <div className="absolute left-1/2 -top-8 -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
+    Email cannot be changed
+  </div>
               </div>
             </div>
 

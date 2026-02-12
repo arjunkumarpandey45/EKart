@@ -3,10 +3,10 @@ import connectDB from './database/db.js'
 import userRoute from './routes/userRoute.js'
 import productRoute from './routes/productRoute.js'
 import cors from 'cors'
-const app = express()
+const app = express() 
 app.use(express.json())
 import "dotenv/config"
-app.use(cors({
+app.use(cors({ 
 origin:'http://localhost:5173',credentials:true
 }))
 const port = process.env.PORT || 1000
